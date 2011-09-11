@@ -1,0 +1,8 @@
+(name Typedef)
+
+(trigger
+    (tab td))
+
+(only-in [source.c, source.objc, source.c++, source.objc++])
+
+(snippet [typedef %{1="int"} %{2="MyCustomType"};])

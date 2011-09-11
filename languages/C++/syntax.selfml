@@ -1,0 +1,189 @@
+(root source.c++
+    (include @special_block)
+    (include source.c)
+    (zone storage.modifier.c++
+        (match
+            (list friend explicit virtual)
+            (boundary.both)))
+    (zone storage.modifier.c++
+        (match
+            (list private: protected: public:)
+            (boundary.left)))
+    (zone keyword.control.c++
+        (match
+            (list catch operator try throw using)
+            (boundary.both)))
+    (zone keyword.control.c++
+        (match
+            (regex `\bdelete\b(\s*\[\])?|\bnew\b(?!])`)))
+    (zone variable.other.readwrite.member.c++
+        (match
+            (regex [\b(f|m)[A-Z]\w*\b])))
+    (zone variable.language.c++
+        (match
+            (list this)
+            (boundary.both)))
+    (zone storage.type.template.c++
+        (match
+            (regex \btemplate\b\s*)))
+    (zone keyword.operator.cast.c++
+        (match
+            (regex [\b(const_cast|dynamic_cast|reinterpret_cast|static_cast)\b\s*])))
+    (zone keyword.operator.c++
+        (match
+            (list and and_eq bitand bitor compl not not_eq or or_eq typeid xor xor_eq)
+            (boundary.both)))
+    (zone storage.type.c++
+        (match
+            (list class wchar_t)
+            (boundary.both)))
+    (zone storage.modifier.c++
+        (match
+            (list export mutable typename)
+            (boundary.both)))
+    (zone meta.function.destructor.c++
+        (start
+            (regex [(?x)
+    				(?:  ^                                 # begin-of-line
+    				  |  (?: (?<!else|new|=) )             #  or word + space before name
+    				)
+    				((?:[A-Za-z_][A-Za-z0-9_]*::)*+~[A-Za-z_][A-Za-z0-9_]*) # actual name
+    				 \s*(\()                           # start bracket or end-of-line
+    			]
+                (1 entity.name.function.c++)
+                (2 punctuation.definition.parameters.c)))
+        (end
+            (regex [\)]
+                (0 punctuation.definition.parameters.c)))
+        (subzones
+            (include $base)))
+    (zone meta.function.destructor.prototype.c++
+        (start
+            (regex [(?x)
+    				(?:  ^                                 # begin-of-line
+    				  |  (?: (?<!else|new|=) )             #  or word + space before name
+    				)
+    				((?:[A-Za-z_][A-Za-z0-9_]*::)*+~[A-Za-z_][A-Za-z0-9_]*) # actual name
+    				 \s*(\()                           # terminating semi-colon
+    			]
+                (1 entity.name.function.c++)
+                (2 punctuation.definition.parameters.c)))
+        (end
+            (regex [\)]
+                (0 punctuation.definition.parameters.c)))
+        (subzones
+            (include $base))))
+
+(collection block
+    (zone meta.block.c++
+        (start
+            (regex [\{]))
+        (end
+            (regex [\}]))
+        (subzones
+            (zone meta.function-call.c
+                (match
+                    (regex [(?x)
+    				(
+    					(?!while|for|do|if|else|switch|catch|enumerate|return|r?iterate)(?: \b[A-Za-z_][A-Za-z0-9_]*+\b | :: )*+                  # actual name
+    				)
+    				 \s*(\()]
+                        (1 support.function.any-method.c)
+                        (2 punctuation.definition.parameters.c))))
+            (include $base))))
+
+(collection constructor
+    (zone meta.function.constructor.c++
+        (start
+            (regex [(?x)
+    				(?:  ^\s*)                             # begin-of-line
+    				((?!while|for|do|if|else|switch|catch|enumerate|r?iterate)[A-Za-z_][A-Za-z0-9_:]*) # actual name
+    				 \s*(\()                            # start bracket or end-of-line
+    			]
+                (1 entity.name.function.c++)
+                (2 punctuation.definition.parameters.c)))
+        (end
+            (regex [\)]
+                (0 punctuation.definition.parameters.c)))
+        (subzones
+            (include $base)))
+    (zone meta.function.constructor.initializer-list.c++
+        (start
+            (regex [(?x)
+    				(:)                            # begin-of-line
+    				((?=\s*[A-Za-z_][A-Za-z0-9_:]* # actual name
+    				 \s*(\()))                      # start bracket or end-of-line
+    			]
+                (1 punctuation.definition.parameters.c)))
+        (end
+            (regex [(?=\{)]))
+        (subzones
+            (include $base))))
+
+(collection angle_brackets
+    (zone meta.angle-brackets.c++
+        (start <)
+        (end >)
+        (subzones
+            (include @angle_brackets)
+            (include $base))))
+
+(collection special_block
+    (zone meta.namespace-block.c++
+        (start
+            (regex [\b(namespace)\b\s*([_A-Za-z][_A-Za-z0-9]*\b)?+]
+                (1 storage.type.c++)
+                (2 entity.name.type.c++)))
+        (end
+            (regex [(?<=\})|(?=(;|,|\(|\)|>|\[|\]|=))]))
+        (subzones
+            (zone
+                (start
+                    (regex [(\{)]
+                        (1 punctuation.definition.scope.c++)))
+                (end
+                    (regex [(\})]
+                        (1 punctuation.definition.invalid.c++)))
+                (subzones
+                    (include @special_block)
+                    (include @constructor)
+                    (include $base)))
+            (include $base)))
+    (zone meta.class-struct-block.c++
+        (start
+            (regex [\b(class|struct)\b\s*([_A-Za-z][_A-Za-z0-9]*\b)?+]
+                (1 storage.type.c++)
+                (2 entity.name.type.c++)))
+        (end
+            (regex [(?<=\})|(?=(;|,|\(|\)|>|\[|\]|=))]))
+        (subzones
+            (include @angle_brackets)
+            (zone
+                (start
+                    (regex [(\{)]
+                        (1 punctuation.definition.scope.c++)))
+                (end
+                    (regex [(\})(\s*\n)?]
+                        (1 punctuation.definition.invalid.c++)
+                        (2 invalid.illegal.you-forgot-semicolon.c++)))
+                (subzones
+                    (include @special_block)
+                    (include @constructor)
+                    (include $base)))
+            (include $base)))
+    (zone meta.extern-block.c++
+        (start
+            (regex [\b(extern)(?=\s*")]
+                (1 storage.modifier.c++)))
+        (end
+            (regex [(?<=\})|(?=\w)]))
+        (subzones
+            (zone
+                (start
+                    (regex [\{]))
+                (end
+                    (regex [\}]))
+                (subzones
+                    (include @special_block)
+                    (include $base)))
+            (include $base))))

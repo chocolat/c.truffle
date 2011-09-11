@@ -1,0 +1,11 @@
+(name [For Loop])
+
+(trigger
+    (tab for))
+
+(only-in [source.c, source.objc, source.c++, source.objc++])
+
+(snippet [for(size_t %{2="i"} = 0; %{2} < %{1="count"}; %{3="++%{2}"})
+{
+	%{0="/* code */"}
+}])

@@ -1,0 +1,8 @@
+(name [#include "…"])
+
+(trigger
+    (tab inc))
+
+(only-in [source.c, source.objc, source.c++, source.objc++])
+
+(snippet [#include "%{1="%{TM_FILENAME/\..+$/.h/}"}"])

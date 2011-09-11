@@ -1,0 +1,8 @@
+(name std::vector)
+
+(trigger
+    (tab vector))
+
+(only-in [source.c++, source.objc++])
+
+(snippet [std::vector<%{1="char"}> v%{0};])

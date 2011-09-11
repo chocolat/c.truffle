@@ -1,0 +1,84 @@
+(detector
+    (extension cc)
+    (extension cpp)
+    (extension cp)
+    (extension cxx)
+    (extension c++)
+    (extension C)
+    (extension h)
+    (extension hh)
+    (extension hpp)
+    (extension h++))
+
+(detector
+    (content-matches [-\*- C\+\+ -\*-]))
+
+(folding
+    (start [(?x)
+		 /\*\*(?!\*)
+		|^(?![^{]*?//|[^{]*?/\*(?!.*?\*/.*?\{)).*?\{\s*($|//|/\*(?!.*?\*/.*\S))
+	])
+    (stop [(?<!\*)\*\*/|^\s*\}]))
+
+(in [source.c, source.c++, source.objc, source.objc++]
+    (shell-variables
+        (TM_COMMENT_START [// ])
+        (TM_COMMENT_START_2 /*)
+        (TM_COMMENT_END_2 */)
+        (TM_COMMENT_DISABLE_INDENT_2 yes))
+    (comment.line [// ])
+    (comment.block /* */))
+
+(in [meta.preprocessor.c.include string.quoted]
+    (no-spellchecking))
+
+(in [meta.preprocessor.c.include string.quoted.other.lt-gt.include])
+
+(in [meta.preprocessor.c.include string.quoted.double])
+
+(in meta.preprocessor.c.include
+    (pair "
+        "
+        (smart-typing)
+        (highlight))
+    (pair <
+        >
+        (smart-typing)
+        (highlight)))
+
+(in comment.block
+    (indentation.decrease [(?=not)possible])
+    (indentation.increase [(?=not)possible])
+    (indentation.increase-next-line-only [(?=not)possible])
+    (indentation.ignore-line [(?=not)possible]))
+
+(in [source.c, source.c++, source.objc, source.objc++]
+    (indentation.decrease [(?x)
+	    ^ (.*\*/)? \s* \} ( [^}{"']* \{ | \s* while \s* \( .* )? [;\s]* (//.*|/\*.*\*/\s*)? $
+	|   ^ \s* (public|private|protected): \s* $
+	|   ^ \s* @(public|private|protected) \s* $
+	])
+    (indentation.increase [(?x)
+	    ^ .* \{ [^}"']* $
+	|   ^ \s* (public|private|protected): \s* $
+	|   ^ \s* @(public|private|protected) \s* $
+	])
+    (indentation.increase-next-line-only [(?x)^
+	    (?! .* [;:{}]                   # do not indent when line ends with ;, :, {, or }
+	        \s* (//|/[*] .* [*]/ \s* $) #  …account for potential trailing comment
+	    |   @(public|private|protected) # do not indent after obj-c data access keywords
+	    )
+	    .* [^\s;:{}] \s* $              # indent next if this one isn’t
+	                                    #  terminated with ;, :, {, or }
+	])
+    (indentation.ignore-line [^\s*((/\*|\*/|//|#|template\b.*?>(?!\(.*\))|@protocol|@optional|@interface(?!.*\{)|@implementation|@end).*)?$]))
+
+(in [meta.class-struct-block.c++ entity.name.function])
+
+(in meta.toc-list.banner)
+
+(in [storage.type.c++.template, keyword.operator.c++.cast]
+    (pair <
+        >
+        (smart-typing)
+        (highlight)))

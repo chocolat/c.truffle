@@ -1,0 +1,99 @@
+(trigger
+    (key [[ctrl][shift]{]))
+
+(name [Fold/Unfold Code])
+
+(only-in meta.block.c)
+
+(input selection scope)
+
+(output replace-selected)
+
+(save nothing)
+
+(script [#!/usr/bin/env ruby
+line = STDIN.read
+$tab = (ENV['TM_SOFT_TABS'] == "NO" ? "\t" : " "*ENV['TM_TAB_SIZE'].to_i )
+def join_code s
+  # transform // comments to /* */ comments while leaving strings intact
+  s.gsub!(/((['"])(?:\\.|.)*?\2)|\/\*.*?\*\/|\/\/([^\n\r]*)/m) do |line| 
+      if $3
+        '/*' + $3.gsub(/\*\//, '') + '*/'
+      else
+        line
+      end
+    end
+  print s.split("\n").map {|line| line.strip}.join(" ")
+end
+
+def print_line(line, indent, for_ticker)
+  s = ""
+  s = "\n" if for_ticker == 0
+  s + $tab*indent + line # the space should be replaced with soft or hard tab
+end
+
+def split_code s
+  res = []
+  indent = 0
+  for_ticker = 1
+  # this regexp should not have a capture depth deeper than 1
+  # yes that does rule out backrefs :(
+  s.split(/([\{\}\;]|"(?:\\.|.)*?"|'(?:\\.|.)*?'|\/\*.*?\*\/|\/\/[^\n\r]*)/).map do |l|
+    l = l.strip
+    case l
+    when /^for\s*\(/
+      res << print_line(l, indent, for_ticker)
+      for_ticker = 5
+    when "{"
+      s = print_line(l, indent, for_ticker)
+	 for_ticker -= 1 unless for_ticker == 0
+      indent += 1
+	  s += print_line("", indent, for_ticker)
+      res << s
+    when "}"
+      indent -= 1
+      res << print_line(l, indent, for_ticker)
+      res << print_line("", indent, for_ticker)
+    when ";"
+      res << l
+      if for_ticker == 0
+        res << print_line("", indent, for_ticker)
+      else
+        res << " "
+      end
+    when /^\s*$/
+	 for_ticker += 1 # if empty string maintain the status-quo
+    else
+      res << l
+    end
+    for_ticker -= 1 unless for_ticker == 0
+  end
+
+require "enumerator"
+out = []
+res.each_cons(2) do |a,b|
+   # remove empty lines inserted when ; is followed by { or }
+	out << a unless a.match(/^\n\s*$/) && b.match(/^\n\s*(\}|\{)\s*$/)
+end
+print out.join
+end
+
+if line.count("\n") > 1
+	join_code(line)
+else
+	split_code(line)
+end
+
+#k = "- (id)showSomeWindow 
+#  {
+#     for(int i =0;i<a;i++)
+#     {
+#       \" boras /* */ //\"
+#       // hello /* */   
+#       if(a)
+#         [ window makeKeyAndOrderFront:self];
+#       }
+#     }"
+#join_code(k)
+#l = "- (id)showSomeWindow { for(int i =0;i<a;i++) { \" boras /* */ //\" /* hello /*    */ if(a) [ window makeKeyAndOrderFront:self]; } }"
+#split_code(l)])

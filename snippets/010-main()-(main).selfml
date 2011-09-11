@@ -1,0 +1,12 @@
+(name [main()])
+
+(trigger
+    (tab main))
+
+(only-in [source.c, source.objc, source.c++, source.objc++])
+
+(snippet [int main (int argc, char const%{TM_C_POINTER=" *"}argv[])
+{
+	%{0="/* code */"}
+	return 0;
+}])

@@ -1,0 +1,13 @@
+(name [#pragma mark])
+
+(trigger
+    (tab mark))
+
+(only-in [source.c, source.objc, source.c++, source.objc++])
+
+(snippet [#if 0
+%{1="#pragma mark -
+"}#pragma mark %{2}
+#endif
+
+%{0}])

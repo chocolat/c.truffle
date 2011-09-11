@@ -1,0 +1,16 @@
+(name Class)
+
+(trigger
+    (tab cl))
+
+(only-in [source.c++, source.objc++])
+
+(snippet [class %{1="%{TM_FILENAME/(.+)\..+|.*/(?1:\L$1_t:name)/}"}
+{
+public:
+	%{1/(\w+).*/$1/} (%{2="arguments"});
+	virtual ~%{1/(\w+).*/$1/} ();
+
+private:
+	%{0="/* data */"}
+};])

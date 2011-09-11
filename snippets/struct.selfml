@@ -1,0 +1,11 @@
+(name Struct)
+
+(trigger
+    (tab st))
+
+(only-in [source.c, source.objc, source.c++, source.objc++])
+
+(snippet [struct %{1="%{TM_FILENAME/(.+)\..+|.*/(?1:\L$1_t:name)/}"}
+{
+	%{0="/* data */"}
+};])

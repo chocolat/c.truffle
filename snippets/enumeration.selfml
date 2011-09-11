@@ -1,0 +1,8 @@
+(name Enumeration)
+
+(trigger
+    (tab enum))
+
+(only-in [source.c++, source.objc++])
+
+(snippet [enum %{1="name"} { %{0} };])

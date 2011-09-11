@@ -1,0 +1,8 @@
+(name [$1.begin(), $1.end()])
+
+(trigger
+    (tab beginend))
+
+(only-in [source.c++, source.objc++])
+
+(snippet [%{1="v"}%{1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}begin(), %{1="v"}%{1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}end()])

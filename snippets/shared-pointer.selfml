@@ -1,0 +1,8 @@
+(name [Shared Pointer])
+
+(trigger
+    (tab sp))
+
+(only-in [source.c, source.objc, source.c++, source.objc++])
+
+(snippet [typedef std::tr1::shared_ptr<%{2="%{1="my_type"}_t"}> %{3="%{2/_t$/_ptr/}"};])

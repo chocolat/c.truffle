@@ -1,0 +1,8 @@
+(name [template <typename …>])
+
+(trigger
+    (tab tp))
+
+(only-in [source.c++, source.objc++])
+
+(snippet [template <typename %{1="_InputIter"}>])

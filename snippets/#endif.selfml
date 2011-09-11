@@ -1,0 +1,9 @@
+(name [#endif])
+
+(trigger
+    (key [[alt][cmd].]))
+
+(only-in [source.c, source.c++, source.objc, source.objc++, (source.c | source.c++ | source.objc | source.objc++) & comment.block.preprocessor])
+
+(snippet [#endif
+])

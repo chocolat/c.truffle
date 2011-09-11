@@ -1,0 +1,11 @@
+(name Namespace)
+
+(trigger
+    (tab ns))
+
+(only-in [source.c++, source.objc++])
+
+(snippet [namespace%{1/.+/ /m}%{1="%{TM_FILENAME/^((.*?)\..*)?$/(?1:\L$2:my)/}"}
+{
+	%{0}
+}%{1/.+/ \/* /m}%{1}%{1/.+/ *\//m}])

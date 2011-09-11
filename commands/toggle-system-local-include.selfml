@@ -1,0 +1,21 @@
+(trigger
+    (key [[ctrl][shift]"]))
+
+(name [Toggle System/Local Include])
+
+(only-in [string.quoted.double.include.c, string.quoted.other.lt-gt.include.c])
+
+(input selection scope)
+
+(output replace-selected)
+
+(save nothing)
+
+(script [#!/usr/bin/env ruby
+
+print case str = STDIN.read
+  when /\A"(.*)"\z/m then "<" + $1 + ">"
+  when /\A<(.*)>\z/m then '"' + $1 + '"'
+  else str
+end
+])

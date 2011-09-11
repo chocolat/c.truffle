@@ -1,0 +1,8 @@
+(name [fprintf …])
+
+(trigger
+    (tab fprintf))
+
+(only-in [source.c, source.objc, source.c++, source.objc++])
+
+(snippet [fprintf(%{1="stderr"}, "%{2="%s"}\n"%{2/([^%]|%%)*(%.)?.*/(?2:, :\);)/}%{3}%{2/([^%]|%%)*(%.)?.*/(?2:\);)/}])
