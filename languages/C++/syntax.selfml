@@ -155,7 +155,7 @@
                 (1 storage.type.c++)
                 (2 entity.name.type.c++)))
         (end
-            (regex [(?<=\})|(?=(;|,|\(|\)|>|\[|\]|=))]))
+            (regex [(?<=\})|(?=(;|\(|\)|>|\[|\]|=))]))
         (subzones
             (include @angle_brackets)
             (zone
