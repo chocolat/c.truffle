@@ -1,6 +1,4 @@
-(menu command.compile-active-file-to-command-line-tool
-    ---
-    command.insert-call-to-constructors
+(menu command.insert-call-to-constructors
     ---
     (submenu Declarations [snippet.if-..-(if)] [snippet.do...while-loop-(do)] [snippet.030-for-int-loop-(fori)] --- [snippet.class-..-(class)] snippet.struct [snippet.namespace-..-(namespace)] snippet.enumeration snippet.typedef --- [snippet.template-<typename-..>-(template)])
     (submenu Idioms snippet.include-header-once-only-guard [snippet.read-file-(readf)] [snippet.010-main()-(main)] [snippet.$1.begin(),-$1.end()-(beginend)] snippet.shared-pointer)
@@ -12,5 +10,4 @@
     [snippet.std-vector-(v)]
     ---
     [snippet.printf-..-(printf)]
-    snippet.fprintf-…
-    command.fold-unfold-code)
+    snippet.fprintf-…)
